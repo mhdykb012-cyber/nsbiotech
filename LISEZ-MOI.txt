@@ -1,0 +1,86 @@
+VERSION VERCEL : déjà connectée à votre nouveau projet Supabase. Voir LISEZ-MOI-VERCEL.txt (étape 2).
+
+VERSION 5b - CORRECTION DES CODES QR
+- Fiche de lot : le code QR du lot n'était jamais généré. Il apparaît maintenant en bas de la page « Fiche / rapport » et dans le PDF du lot (60 mm).
+- Le nom du produit dans le QR du lot était écrit en dur (« Ortie - poudre ») : il reprend désormais le produit réel du lot.
+- Le PDF (lot et produit) génère son propre QR au lieu de chercher celui affiché à l'écran.
+- Modules plus grands (4 px minimum) et rendu net. Avertissement si le QR produit est trop dense (texte trop long = difficile à scanner).
+- QR produit : il n'apparaît qu'une fois les 6 champs remplis (usage, mode d'emploi, précautions, origine, date de péremption, AU MOINS UN conditionnement) ET après un clic sur « Enregistrer la description ». La carte « Code QR du produit » liste maintenant ce qui manque et la page s'y positionne en cas d'oubli.
+- Pour mettre à jour : redéployez sur Vercel, puis fermez et rouvrez l'application installée.
+
+VERSION 5 - COMPTES UTILISATEURS ET DONNÉES PARTAGÉES (Supabase)
+Trois profils, chacun avec son propre compte (e-mail + mot de passe) :
+- Responsable : tout (lots, dépenses, produits, abonnement, annulations, clôture).
+- Opérateur : consulte les lots et AJOUTE des pesées (il ne peut ni modifier ni supprimer l'existant).
+- Auditeur : lecture seule.
+Les droits sont appliqués par le serveur, pas seulement par l'interface. Les données sont partagées entre tous les ordinateurs (mise à jour automatique toutes les 20 s).
+
+MISE EN SERVICE (une seule fois, environ 15 minutes)
+1. Créez un projet gratuit sur https://supabase.com
+2. Authentication > Providers > Email : DÉSACTIVEZ « Allow new users to sign up » (sinon n'importe qui pourrait créer un compte).
+3. SQL Editor > New query : collez tout le contenu de supabase_setup.sql > Run.
+4. Authentication > Users > Add user : créez D'ABORD votre compte (il devient automatiquement Responsable), puis ceux de l'opérateur et de l'auditeur. Cochez « Auto Confirm User ».
+5. Dans le SQL Editor, attribuez les rôles (remplacez les e-mails) :
+     update public.profiles set role='op',  name='Nom Opérateur' where email='operateur@exemple.com';
+     update public.profiles set role='aud', name='Nom Auditeur'  where email='auditeur@exemple.com';
+6. Project Settings > API : copiez « Project URL » et la clé « anon public ».
+7. Ouvrez index.html dans un éditeur, cherchez SB_URL et SB_KEY (vers la fin du fichier) et collez les deux valeurs. N'utilisez JAMAIS la clé service_role.
+8. Redéployez sur Vercel, puis fermez et rouvrez l'application installée.
+Au premier accès du Responsable, ses données actuelles (stockées dans son navigateur) sont envoyées automatiquement vers la base.
+Si SB_URL et SB_KEY restent vides, l'application fonctionne comme avant (données locales, sans mot de passe).
+
+NOTES
+- Une connexion internet est nécessaire pour se connecter et synchroniser.
+- Le bouton « Effacer les données » est retiré en mode en ligne.
+- Les réglages de la balance (MAC, bindkey) restent propres à chaque appareil.
+- Changer le mot de passe d'un utilisateur : Supabase > Authentication > Users.
+
+VERSION 4 - MISE A JOUR
+- Code QR produit corrigé : il est maintenant généré directement par l'application, sans bibliothèque externe (fonctionne aussi hors connexion et avec une connexion lente). Il apparaît dès que la description du produit est enregistrée.
+- Le QR agrandi sur la fiche produit PDF (75 mm) pour faciliter la lecture.
+- Le téléchargement du PDF nécessite toujours internet (chargement de l'outil PDF au premier usage).
+- Pour mettre à jour : redéployez sur Vercel (déploiement de production), puis fermez et rouvrez l'application installée.
+
+VERSION 3 - MISE A JOUR
+- Nouvel onglet ABONNEMENT : compte à rebours (jours, heures, minutes, secondes) et pourcentage de validité restante.
+  Vert : 100 % à 80 % | Orange : 79 % à 40 % | Rouge : 39 % à 1 % (rouge 'expiré' à 0 %).
+  Rappel de renouvellement affiché en haut de chaque page dès que l'abonnement passe en orange ou rouge, et dans la barre d'état.
+  Le Responsable peut renouveler (1, 3, 6 ou 12 mois) ou fixer les dates de début et de fin.
+- Nouvel onglet COMMUNAUTÉ : espace de chat pour les utilisateurs (maquette, fonction à développer plus tard).
+- Code QR produit : ajout de l'ORIGINE du produit (nouveau champ obligatoire dans Description) ; les étapes ne figurent plus dans le QR.
+- L'onglet 'Prescription' devient 'Description'.
+- Nouveaux produits : ROMARIN, L'APPRËL, LA PRÊLE, STEVIA, AIGREMOINE, CITRONNELLE COMMUNE, VERVEINE DES INDES, VERVEINE ODORANTE, AGERATUM CONYZOIDES.
+- Limite actuelle : l'abonnement est stocké dans le navigateur (comme le reste). Pour un contrôle réel (non modifiable par le client), il faudra le gérer côté serveur.
+- Pour mettre à jour : remplacez les fichiers du dépôt GitHub (index.html et sw.js notamment), puis fermez et rouvrez l'application installée.
+
+VERSION 2 - MISE A JOUR
+- La mesure de la balance Bluetooth est conservée et reprise automatiquement dans le formulaire de pesée du lot (nouveau lot compris), pendant 5 minutes.
+- Option 'Enregistrer automatiquement chaque mesure reçue' dans Paramètres.
+- La barre d'état affiche l'état Bluetooth et le dernier poids reçu.
+- Pour mettre à jour : remplacez les fichiers du dépôt GitHub par ceux de ce dossier, puis fermez et rouvrez l'application installée.
+
+NSBIO TECH — VERSION PWA (téléphone + ordinateur)
+
+CONTENU
+- index.html : application NSBIO Tech d'origine, adaptée aux petits écrans
+- manifest.webmanifest : paramètres d'installation
+- sw.js : mise en cache de l'interface pour l'ouverture hors connexion
+- icons/icon.svg : icône de l'application
+
+MISE EN LIGNE
+1. Décompressez le ZIP.
+2. Créez un dépôt GitHub et téléversez le CONTENU du dossier (index.html, manifest.webmanifest, sw.js et dossier icons).
+3. Dans Vercel : Add New > Project > importez le dépôt GitHub (voir LISEZ-MOI-VERCEL.txt).
+4. Déployez. Aucune commande de build n'est nécessaire si index.html est à la racine.
+5. Ouvrez l'URL HTTPS publiée.
+
+INSTALLATION
+- Android : ouvrez l'URL dans Chrome > menu ⋮ > Installer l'application / Ajouter à l'écran d'accueil.
+- Windows : ouvrez l'URL dans Edge ou Chrome > icône Installer dans la barre d'adresse ou menu > Installer cette application.
+- iPhone/iPad : ouvrez dans Safari > Partager > Sur l'écran d'accueil.
+
+IMPORTANT — DONNÉES
+Cette première version conserve le fonctionnement de stockage local du prototype (localStorage).
+Les données restent sur l'appareil et dans le navigateur où elles ont été saisies : elles ne sont PAS synchronisées automatiquement entre téléphone et PC.
+Avant un usage réel multi-utilisateur, il faudra ajouter une base de données sécurisée et une authentification.
+La connexion USB/série et certaines fonctions Bluetooth dépendent du navigateur et du matériel. Elles ne sont pas garanties sur iPhone.

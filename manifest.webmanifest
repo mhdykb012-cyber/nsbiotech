@@ -1,0 +1,21 @@
+{
+  "id": "./",
+  "name": "NSBIO Tech – Suivi et optimisation des procédés",
+  "short_name": "NSBIO Tech",
+  "description": "Suivi des lots, pesées, coûts, rendements et rapports de transformation.",
+  "lang": "fr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#e9e9e9",
+  "theme_color": "#17803f",
+  "icons": [
+    {
+      "src": "./icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

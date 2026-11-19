@@ -1,0 +1,54 @@
+NSBIO TECH - DÉPLOIEMENT SUR VERCEL (version 5b)
+
+Cette archive contient l'application NSBIO Tech v5b prête pour Vercel, avec un fichier vercel.json
+(en-têtes pour que le service worker et le manifeste se mettent à jour correctement).
+Aucune étape de compilation : c'est un site statique.
+
+IMPORTANT AVANT DE COMMENCER - NOUVELLE BASE DE DONNÉES
+Cette version est DÉJÀ CONNECTÉE à votre nouveau projet Supabase (SB_URL et SB_KEY renseignés dans index.html).
+La base, les tables et les comptes (Responsable, Opérateur, Auditeur) sont déjà créés : passez directement à l'ÉTAPE 2.
+Si un jour SB_URL ou SB_KEY est vide, l'application fonctionne en mode local (sans mot de passe).
+Le plan gratuit « Hobby » de Vercel est réservé à un usage personnel et non commercial.
+Pour une activité commerciale, vérifiez les conditions de Vercel (plan Pro).
+
+ÉTAPE 1 - CRÉER LA NOUVELLE BASE (Supabase, environ 15 minutes)
+1. Créez un NOUVEAU projet gratuit sur https://supabase.com (choisissez la région la plus proche de vos utilisateurs).
+2. Authentication > Providers > Email : DÉSACTIVEZ « Allow new users to sign up ».
+3. SQL Editor > New query : collez tout le contenu de supabase_setup.sql > Run.
+4. Authentication > Users > Add user : créez D'ABORD votre compte (il devient automatiquement Responsable),
+   puis ceux de l'opérateur et de l'auditeur. Cochez « Auto Confirm User ».
+5. Dans le SQL Editor, attribuez les rôles (remplacez les e-mails) :
+     update public.profiles set role='op',  name='Nom Opérateur' where email='operateur@exemple.com';
+     update public.profiles set role='aud', name='Nom Auditeur'  where email='auditeur@exemple.com';
+6. Project Settings > API : copiez « Project URL » et la clé « anon / publishable ». Jamais la clé service_role.
+7. Ouvrez index.html dans un éditeur, cherchez  const SB_URL=''  et  const SB_KEY=''  (vers la fin du fichier),
+   et collez les deux valeurs entre les guillemets.
+
+ÉTAPE 2 - DÉPLOYER SUR VERCEL
+OPTION A - GITHUB (recommandée, mises à jour automatiques)
+1. Créez un dépôt GitHub (PRIVÉ de préférence) et téléversez le CONTENU du dossier (index.html AVEC vos valeurs SB_URL/SB_KEY, sw.js,
+   manifest.webmanifest, vercel.json, supabase_setup.sql, dossier icons) À LA RACINE du dépôt, pas dans un sous-dossier.
+2. Sur https://vercel.com : Add New > Project > importez le dépôt.
+3. Framework Preset : « Other ». Build Command : laisser vide. Output Directory : laisser vide (ou « . »). Install Command : laisser vide.
+4. Deploy. Vous obtenez une adresse en https://nom-du-projet.vercel.app
+
+OPTION B - SANS GITHUB (ligne de commande)
+1. Installez Node.js, puis dans le dossier décompressé :  npx vercel
+2. Répondez aux questions (connexion, nom du projet). Pour la mise en production :  npx vercel --prod
+
+APRÈS LE DÉPLOIEMENT
+1. Supabase (nouveau projet) > Authentication > URL Configuration : ajoutez l'adresse Vercel comme « Site URL »
+   (et dans Redirect URLs) pour que d'éventuels liens e-mail (mot de passe oublié) pointent au bon endroit.
+2. Ouvrez l'adresse Vercel et connectez-vous avec le compte Responsable créé à l'étape 1. L'application démarre vide : créez vos produits, descriptions et lots.
+3. Installation : Android = Chrome > Installer l'application ; Windows = Edge/Chrome > Installer ;
+   iPhone = Safari > Partager > Sur l'écran d'accueil.
+4. Les réglages de la balance (MAC, bindkey) sont propres à chaque appareil ET à chaque adresse : à ressaisir.
+5. Mises à jour futures : remplacez les fichiers dans GitHub (Option A) ou relancez « npx vercel --prod » (Option B),
+   puis fermez et rouvrez l'application installée.
+
+DÉPANNAGE
+- Page blanche ou erreur 404 : les fichiers ne sont pas à la racine du dépôt.
+- « Failed to fetch » à la connexion : vérifiez SB_URL et SB_KEY dans index.html (sans espace, entre guillemets).
+- Aucun écran de connexion par mot de passe : SB_URL ou SB_KEY est resté vide.
+- Ancienne version affichée : fermez complètement l'application installée puis rouvrez-la
+  (le service worker se met à jour au rechargement).
